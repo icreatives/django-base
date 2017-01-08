@@ -1,5 +1,5 @@
-FROM ubuntu:12.04
-MAINTAINER chris.vanegmond@image-centre.com
+FROM ubuntu:12.04.5
+MAINTAINER python.devs@icg.co.nz
 
 # Trick to make sure we can use 'source' command.
 # Move this to django-base later.
@@ -14,7 +14,11 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" > /etc
 
 RUN apt-get update
 
+# RUN apt-get install --fix-missing -y build-essential python-software-properties software-properties-common curl git vim nginx supervisor  # python python-dev python-setuptools 
+
 RUN apt-get install -y build-essential python-software-properties software-properties-common postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3
+
+RUN apt-get install -y nginx
 
 RUN apt-get install -y curl git vim rubygems
 
@@ -63,6 +67,14 @@ USER root
 RUN mkdir /srv/www
 
 WORKDIR /srv/www
+
+COPY supervisor-app.conf /etc/supervisor/conf.d/
+
+RUN touch /var/log/uwsgi.log
+
+ADD uwsgi.conf /etc/init/uwsgi.conf
+RUN chmod 755 /etc/init/uwsgi.conf
+
 ADD start.sh /root/start.sh
 RUN chmod +x /root/start.sh
 
