@@ -1,8 +1,7 @@
-FROM ubuntu:12.04.5
+FROM ubuntu:16.04
 MAINTAINER python.devs@icg.co.nz
 
 # Trick to make sure we can use 'source' command.
-# Move this to django-base later.
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Add the PostgreSQL PGP key to verify their Debian packages.
@@ -14,30 +13,44 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" > /etc
 
 RUN apt-get update
 
-# RUN apt-get install --fix-missing -y build-essential python-software-properties software-properties-common curl git vim nginx supervisor  # python python-dev python-setuptools 
-
-RUN apt-get install -y build-essential python-software-properties software-properties-common postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3
+RUN apt-get install -y build-essential
+# RUN apt-get install -y python-software-properties
+RUN apt-get install -y --fix-missing python-software-properties
+RUN apt-get install -y software-properties-common
+RUN apt-get install -y postgresql
+RUN apt-get install -y postgresql-client
+RUN apt-get install -y postgresql-contrib
 
 RUN apt-get install -y nginx
 
-RUN apt-get install -y curl git vim rubygems
+RUN apt-get install -y curl git vim
 
 RUN apt-get install -y python-dev python-setuptools
 
+# RUN apt-get install upstart-sysv
+RUN apt-get install -y --fix-missing upstart-sysv
+
 RUN easy_install pip
-RUN pip install uwsgi ipython virtualenvwrapper supervisor
+RUN pip install uwsgi ipython virtualenvwrapper
 
 # needed for Pillow
-RUN apt-get install -y ffmpeg libjpeg-dev libpng-dev libpq-dev libxml2-dev libxslt1-dev libtiff-dev uuid-dev
+RUN apt-get install -y ffmpeg
+RUN apt-get install -y libjpeg-dev
+RUN apt-get install -y libpng-dev
+RUN apt-get install -y libpq-dev
+RUN apt-get install -y libxml2-dev
+RUN apt-get install -y libxslt1-dev
+RUN apt-get install -y libtiff-dev
+RUN apt-get install -y uuid-dev
 RUN ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 RUN ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
 RUN ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 
 # Xapian
-RUN apt-get install -y libxapian-dev
+RUN apt-get install -y --fix-missing libxapian-dev
 
 # openSSL needs this one
-RUN apt-get install -y libffi-dev
+RUN apt-get install -y --fix-missing libffi-dev
 
 ####################
 # PostgreSQL stuff #
@@ -52,12 +65,13 @@ RUN /etc/init.d/postgresql start && psql --command "CREATE USER docker WITH SUPE
 
 # Adjust PostgreSQL configuration so that remote connections to the
 # database are possible. 
-#RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
+#RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.6/main/pg_hba.conf
 
-#RUN echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
+#RUN echo "listen_addresses='*'" >> /etc/postgresql/9.6/main/postgresql.conf
 
-RUN sed -i '1s/^/local all docker trust\n/' /etc/postgresql/9.3/main/pg_hba.conf
-#RUN echo "local all all trust" >> /etc/postgresql/9.3/main/pg_hba.conf
+RUN sed -i '1s/^/local all docker trust\n/' /etc/postgresql/*/main/pg_hba.conf
+# RUN sed -i '1s/^/local all docker trust\n/' /etc/postgresql/9.6/main/pg_hba.conf
+#RUN echo "local all all trust" >> /etc/postgresql/9.6/main/pg_hba.conf
 
 ##################
 # End PostgreSQL #
