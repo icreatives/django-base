@@ -30,6 +30,10 @@ RUN apt-get install -y python-dev python-setuptools
 # RUN apt-get install upstart-sysv
 RUN apt-get install -y --fix-missing upstart-sysv
 
+RUN apt-get install -y sendmail
+
+RUN apt-get install -y rabbitmq-server
+
 RUN easy_install pip
 RUN pip install uwsgi ipython virtualenvwrapper
 
