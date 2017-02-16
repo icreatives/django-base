@@ -82,8 +82,6 @@ RUN mkdir /srv/www
 
 WORKDIR /srv/www
 
-COPY supervisor-app.conf /etc/supervisor/conf.d/
-
 RUN touch /var/log/uwsgi.log
 
 ADD uwsgi.conf /etc/init/uwsgi.conf
